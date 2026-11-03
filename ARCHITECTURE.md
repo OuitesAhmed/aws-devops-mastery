@@ -67,12 +67,20 @@ flowchart TD
 
                 subgraph TierDB["Tier 3 : Prive Donnees"]
                     DBSubnets["DB Subnet Group Multi-AZ"]
+                    Aurora["Amazon Aurora Serverless v2\nPostgreSQL 16 (0.5 - 1.0 ACU)"]
                     DBSG["SG: dev-database-sg (Port 5432 depuis ECS)"]
+                    DBSubnets --- Aurora
+                end
+
+                subgraph SecretsSecurity["Secrets & Configuration"]
+                    SecretsMgr["AWS Secrets Manager\n(Master DB Credentials + App Secrets)"]
                 end
 
                 IGW --> ALB
                 ALB -->|"Trafic HTTP Relaye"| Fargate
-                Fargate -.->|"Requetes SQL"| DBSubnets
+                Fargate -->|"Requetes SQL Port 5432"| Aurora
+                Fargate -.->|"Recuperation Zero-Secret (IAM)"| SecretsMgr
+                Aurora -.->|"Gestion & Rotation automatique"| SecretsMgr
             end
 
             %% PROJECT 3: SERVERLESS EVENT-DRIVEN
@@ -144,9 +152,11 @@ flowchart TD
 * **S3 Account Public Access Block** : aucun bucket ne peut fuiter publiquement.
 * **Amazon GuardDuty** : détection d'anomalies réseau et de compromission en temps réel.
 
-### 4. Réseau 3-Tiers Zero-Trust (Terraform)
-* Isolation stricte par subnets : **Public** (ALB), **Privé App** (ECS Fargate), **Privé Données** (RDS / Aurora).
+### 4. Réseau 3-Tiers Zero-Trust & Zero-Secret (Terraform)
+* Isolation stricte par subnets : **Public** (ALB), **Privé App** (ECS Fargate), **Privé Données** (Aurora Serverless v2 PostgreSQL).
 * Security Groups croisés : les conteneurs ECS n'acceptent **que** le trafic relayé par l'ALB, et la base n'accepte **que** le port 5432 venant d'ECS.
+* **Zero-Hardcoded Secrets** : mot de passe maître Aurora géré et pivoté nativement par **AWS Secrets Manager** (`manage_master_user_password = true`), sans aucun mot de passe en clair dans le code Terraform ou le fichier `terraform.tfstate`.
+* Injection sécurisée des identifiants et variables d'environnement (`DB_HOST`, `DB_USER`, `DB_PASSWORD`, tokens API) dans ECS au démarrage via le rôle IAM d'exécution.
 
 ### 5. Serverless Event-Driven Architecture (AWS CDK TypeScript)
 * Découplage total via **Amazon EventBridge**.
