@@ -12,7 +12,7 @@ flowchart TD
     Dev["DevOps Engineer (Local)"]
     GHRunner["GitHub Actions Runner (CI/CD)"]
     WebClient["Client Web / API"]
-    AdminEmail["Administrateur (ouites_ahmed@outlook.fr)"]
+    AdminEmail["Administrateur (Email Alertes)"]
 
     %% GITHUB OIDC AUTH
     subgraph GitOpsFederation["04. Federation GitOps Zero-Secret"]
@@ -22,17 +22,17 @@ flowchart TD
     end
 
     %% AWS ENVIRONMENT
-    subgraph AWSOrg["AWS Organizations (o-y0nr29zt45)"]
+    subgraph AWSOrg["AWS Organizations"]
         
         %% MANAGEMENT ACCOUNT
-        subgraph MgmtAccount["Compte Maitre Management (825651620434)"]
-            RootOU["Organisation Root (r-2lx7)"]
+        subgraph MgmtAccount["Compte Maitre Management"]
+            RootOU["Organisation Root"]
             SCPs["Service Control Policies SCPs (FullAWSAccess)"]
             RootOU --- SCPs
         end
 
         %% WORKLOAD ACCOUNT
-        subgraph WorkloadAccount["Compte Workload (453388806918 - Region Paris eu-west-3)"]
+        subgraph WorkloadAccount["Compte Workload (Region Paris eu-west-3)"]
             
             %% FINOPS GUARDRAIL
             subgraph FinOpsGuardrail["00. Garde-Fou FinOps"]
@@ -132,7 +132,7 @@ flowchart TD
 ## 🔍 Les 6 Piliers Architecturaux
 
 ### 1. Gouvernance Multi-Comptes (AWS Organizations)
-* Séparation stricte entre le **Management Account** (`825651620434`) dédié à la facturation / SCPs et le **Workload Account** (`453388806918`) hébergeant les ressources techniques.
+* Séparation stricte entre le **Management Account** dédié à la facturation / SCPs et le **Workload Account** hébergeant les ressources techniques.
 * Politiques de contrôle de service (**SCPs**) héritées depuis la racine `Root`.
 
 ### 2. CI/CD GitOps Zero-Secret (IAM OIDC Federation)

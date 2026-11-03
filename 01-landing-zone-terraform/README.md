@@ -8,7 +8,7 @@ Ce projet déploie la **fondation de sécurité et d'audit** requise dans les en
 
 ```mermaid
 flowchart TD
-    subgraph AWSAccount["Compte AWS (453388806918)"]
+    subgraph AWSAccount["Compte AWS (Workload Account)"]
         subgraph KMS["Chiffrement Centralisé"]
             CMK["AWS KMS Customer Managed Key\n(Rotation automatique annuelle)"]
         end

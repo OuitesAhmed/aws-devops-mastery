@@ -1,5 +1,5 @@
 aws_region         = "eu-west-3" # Paris
-github_org_or_user = "*"           # Remplacez par votre username GitHub (ex: ahmed-ouites) ou laissez '*'
+github_org_or_user = "*"           # Remplacez par votre username GitHub (ex: octocat) ou laissez '*'
 github_repo_name   = "*"           # Remplacez par le nom de votre repo GitHub ou laissez '*'
 role_name          = "github-actions-deployer-role"
 

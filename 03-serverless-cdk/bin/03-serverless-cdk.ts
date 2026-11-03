@@ -6,7 +6,7 @@ const app = new cdk.App();
 
 new ServerlessEventDrivenStack(app, 'ServerlessEventDrivenStack', {
   env: {
-    account: process.env.CDK_DEFAULT_ACCOUNT || '453388806918',
+    account: process.env.CDK_DEFAULT_ACCOUNT,
     region: process.env.CDK_DEFAULT_REGION || 'eu-west-3',
   },
   description: 'Projet 3 : Plateforme Serverless Event-Driven (API Gateway, EventBridge, Lambda, DynamoDB)',

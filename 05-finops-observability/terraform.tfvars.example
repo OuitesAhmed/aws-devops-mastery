@@ -1,5 +1,5 @@
 aws_region     = "eu-west-3" # Paris
 environment    = "prod"
 dashboard_name = "Platform-Unified-Observability"
-alert_email    = "ahmed.ouites@gmail.com"
+alert_email    = "alerte-ops@exemple.com"
 

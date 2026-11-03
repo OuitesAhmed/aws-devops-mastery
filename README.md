@@ -43,4 +43,4 @@ cd 05-finops-observability/scripts
 ## 📜 Revue d'Architecture Well-Architected
 
 Consultez le rapport formel complet dans :
-👉 [`05-finops-observability/WELL_ARCHITECTED_REVIEW.md`](file:///Users/ahmed/.gemini/antigravity/scratch/aws-devops-mastery/05-finops-observability/WELL_ARCHITECTED_REVIEW.md)
+👉 [`05-finops-observability/WELL_ARCHITECTED_REVIEW.md`](05-finops-observability/WELL_ARCHITECTED_REVIEW.md)
