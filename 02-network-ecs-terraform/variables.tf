@@ -40,3 +40,44 @@ variable "desired_count" {
   default     = 1
 }
 
+# ==============================================================================
+# Variables Aurora Serverless v2 PostgreSQL & Base de Données
+# ==============================================================================
+
+variable "enable_database" {
+  description = "Activer Amazon Aurora Serverless v2. Désactivé par défaut (false) pour garantir un coût à 0,00$ FinOps en phase de repos."
+  type        = bool
+  default     = false
+}
+
+variable "aurora_engine_version" {
+  description = "Version du moteur PostgreSQL pour Aurora Serverless v2"
+  type        = string
+  default     = "16.8"
+}
+
+variable "aurora_min_capacity" {
+  description = "Capacité minimale en ACU (Aurora Capacity Units). 0.5 ACU = ~1 Go RAM"
+  type        = number
+  default     = 0.5
+}
+
+variable "aurora_max_capacity" {
+  description = "Capacité maximale en ACU. 1.0 ACU = ~2 Go RAM"
+  type        = number
+  default     = 1.0
+}
+
+variable "db_name" {
+  description = "Nom initial de la base de données PostgreSQL"
+  type        = string
+  default     = "appdb"
+}
+
+variable "db_username" {
+  description = "Nom d'utilisateur administrateur de la base de données"
+  type        = string
+  default     = "dbadmin"
+}
+
+

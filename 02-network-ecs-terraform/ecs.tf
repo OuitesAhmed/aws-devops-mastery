@@ -45,7 +45,54 @@ resource "aws_iam_role_policy_attachment" "ecs_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+# Rôle IAM applicatif de tâche ECS (accès aux SDK AWS par l'application elle-même)
+resource "aws_iam_role" "ecs_task" {
+  name = "${var.environment}-ecs-task-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# Politique IAM permettant à l'agent ECS de récupérer les secrets chiffrés dans AWS Secrets Manager
+resource "aws_iam_policy" "ecs_secrets" {
+  name        = "${var.environment}-ecs-secrets-policy"
+  description = "Allows ECS agent to retrieve secrets from AWS Secrets Manager without hardcoding"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "kms:Decrypt"
+        ]
+        Resource = concat(
+          [aws_secretsmanager_secret.app_config.arn],
+          var.enable_database ? [aws_rds_cluster.aurora[0].master_user_secret[0].secret_arn] : []
+        )
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_secrets" {
+  role       = aws_iam_role.ecs_execution.name
+  policy_arn = aws_iam_policy.ecs_secrets.arn
+}
+
 # Task Definition ECS Fargate (Légère : 0.25 vCPU, 512 Mo RAM)
+# Injection Zero-Secret des identifiants et clés d'API depuis Secrets Manager
 resource "aws_ecs_task_definition" "app" {
   family                   = "${var.environment}-app-task"
   network_mode             = "awsvpc"
@@ -53,6 +100,7 @@ resource "aws_ecs_task_definition" "app" {
   cpu                      = "256"
   memory                   = "512"
   execution_role_arn       = aws_iam_role.ecs_execution.arn
+  task_role_arn            = aws_iam_role.ecs_task.arn
 
   container_definitions = jsonencode([
     {
@@ -66,6 +114,40 @@ resource "aws_ecs_task_definition" "app" {
           protocol      = "tcp"
         }
       ]
+      secrets = concat(
+        [
+          {
+            name      = "API_KEY"
+            valueFrom = "${aws_secretsmanager_secret.app_config.arn}:api_key::"
+          },
+          {
+            name      = "JWT_SECRET"
+            valueFrom = "${aws_secretsmanager_secret.app_config.arn}:jwt_secret::"
+          }
+        ],
+        var.enable_database ? [
+          {
+            name      = "DB_HOST"
+            valueFrom = "${aws_rds_cluster.aurora[0].master_user_secret[0].secret_arn}:host::"
+          },
+          {
+            name      = "DB_PORT"
+            valueFrom = "${aws_rds_cluster.aurora[0].master_user_secret[0].secret_arn}:port::"
+          },
+          {
+            name      = "DB_USER"
+            valueFrom = "${aws_rds_cluster.aurora[0].master_user_secret[0].secret_arn}:username::"
+          },
+          {
+            name      = "DB_PASSWORD"
+            valueFrom = "${aws_rds_cluster.aurora[0].master_user_secret[0].secret_arn}:password::"
+          },
+          {
+            name      = "DB_NAME"
+            valueFrom = "${aws_rds_cluster.aurora[0].master_user_secret[0].secret_arn}:dbname::"
+          }
+        ] : []
+      )
       logConfiguration = {
         logDriver = "awslogs"
         options = {

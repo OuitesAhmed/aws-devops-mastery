@@ -33,3 +33,28 @@ output "ecs_service_name" {
   value       = aws_ecs_service.app.name
 }
 
+# ==============================================================================
+# Outputs AWS Secrets Manager & Aurora Serverless v2
+# ==============================================================================
+
+output "app_secret_arn" {
+  description = "ARN du secret applicatif géré dans AWS Secrets Manager"
+  value       = aws_secretsmanager_secret.app_config.arn
+}
+
+output "aurora_cluster_endpoint" {
+  description = "Endpoint d'écriture du cluster Aurora Serverless v2 (si activé)"
+  value       = try(aws_rds_cluster.aurora[0].endpoint, "Désactivé (enable_database = false)")
+}
+
+output "aurora_cluster_reader_endpoint" {
+  description = "Endpoint de lecture (Read Replica) du cluster Aurora Serverless v2 (si activé)"
+  value       = try(aws_rds_cluster.aurora[0].reader_endpoint, "Désactivé (enable_database = false)")
+}
+
+output "aurora_master_secret_arn" {
+  description = "ARN du secret contenant les identifiants maîtres Aurora généré et géré par AWS Secrets Manager"
+  value       = try(aws_rds_cluster.aurora[0].master_user_secret[0].secret_arn, "Désactivé (enable_database = false)")
+}
+
+
