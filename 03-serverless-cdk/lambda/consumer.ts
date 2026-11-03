@@ -44,3 +44,4 @@ export const handler = async (event: EventBridgeEvent<'OrderPlaced', OrderDetail
     throw error; // Déclenche le retry EventBridge ou l'envoi vers la Dead-Letter Queue (DLQ)
   }
 };
+
