@@ -53,3 +53,4 @@ sequenceDiagram
    ```
 
 Une fois déployé, copiez les fichiers du dossier `.github/workflows/` à la racine de votre dépôt Git pour activer la CI/CD automatique !
+
