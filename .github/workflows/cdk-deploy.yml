@@ -1,0 +1,57 @@
+name: "CDK Serverless CI/CD (OIDC Zero-Secret)"
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "03-serverless-cdk/**"
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - "03-serverless-cdk/**"
+
+permissions:
+  id-token: write # Indispensable pour demander le jeton OIDC à GitHub
+  contents: read
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 03-serverless-cdk
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+          cache-dependency-path: 03-serverless-cdk/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Infrastructure Unit Tests (Jest)
+        run: npm test
+
+      - name: Synthesize CloudFormation Template
+        run: npx cdk synth
+
+      # Authentification AWS Zero-Secret via IAM OIDC Federation
+      - name: Configure AWS Credentials (OIDC Assume Role)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::453388806918:role/github-actions-deployer-role
+          aws-region: eu-west-3
+          audience: sts.amazonaws.com
+
+      - name: CDK Diff (Pre-deployment check)
+        run: npx cdk diff
+
+      - name: CDK Deploy (Only on Main branch push)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: npx cdk deploy --require-approval never

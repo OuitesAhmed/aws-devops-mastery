@@ -1,0 +1,53 @@
+name: "Terraform CI Validation (OIDC Zero-Secret)"
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - "01-landing-zone-terraform/**"
+      - "02-network-ecs-terraform/**"
+      - "04-cicd-oidc/**"
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate-terraform:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir:
+          - "01-landing-zone-terraform"
+          - "02-network-ecs-terraform"
+          - "04-cicd-oidc"
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.dir }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.10.0"
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
+
+      - name: Configure AWS Credentials (OIDC Assume Role)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::453388806918:role/github-actions-deployer-role
+          aws-region: eu-west-3
+          audience: sts.amazonaws.com
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
