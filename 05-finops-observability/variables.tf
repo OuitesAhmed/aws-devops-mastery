@@ -19,5 +19,6 @@ variable "dashboard_name" {
 variable "alert_email" {
   description = "Adresse email recevant les alarmes CloudWatch"
   type        = string
-  default     = "ahmed.ouites@gmail.com"
+  default     = "ouites_ahmed@outlook.fr"
 }
+

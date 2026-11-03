@@ -51,3 +51,4 @@ Ce script détecte immédiatement :
 - Les vieux snapshots de plus de 90 jours.
 - Les groupes de logs CloudWatch sans politique de rétention (stockage infini).
 - Les buckets S3 sans politique de transition vers Glacier.
+

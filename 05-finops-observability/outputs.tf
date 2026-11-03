@@ -12,3 +12,4 @@ output "alerts_topic_arn" {
   description = "ARN du topic SNS pour les notifications d'alarmes"
   value       = aws_sns_topic.alerts.arn
 }
+
