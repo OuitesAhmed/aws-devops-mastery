@@ -47,7 +47,7 @@ flowchart TD
 * **NAT Gateway** : **0,00 $** (volontairement non déployé pour économiser 32 $/mois).
 
 > [!TIP]
-> **Règle d'or Freelance & FinOps** : Dès que vous avez fini de tester votre application via l'URL de l'ALB, exécutez `terraform destroy` pour tout supprimer et ne laisser aucune ressource payante tourner en continu.
+> **Règle d'or FinOps** : Dès que vous avez fini de tester votre application via l'URL de l'ALB, exécutez `terraform destroy` pour tout supprimer et ne laisser aucune ressource payante tourner en continu.
 
 ---
 

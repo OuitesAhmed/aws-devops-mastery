@@ -1,4 +1,4 @@
-# 🚀 AWS DevOps & Freelance Mastery — Portfolio & Architecture Hub
+# 🚀 AWS Cloud DevOps Mastery — Portfolio & Architecture Hub
 
 Ce dépôt contient l'ensemble des architectures de référence, configurations d'Infrastructure as Code (IaC) et pipelines CI/CD conçus et déployés sur **Amazon Web Services (AWS)** selon les standards de sécurité d'entreprise (**CIS AWS Foundations Benchmark**) et le cadre **AWS Well-Architected Framework**.
 
