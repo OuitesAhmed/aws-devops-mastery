@@ -114,6 +114,28 @@ resource "aws_ecs_task_definition" "app" {
           protocol      = "tcp"
         }
       ]
+      environment = concat(
+        [
+          {
+            name  = "ENVIRONMENT"
+            value = var.environment
+          }
+        ],
+        var.enable_database ? [
+          {
+            name  = "DB_HOST"
+            value = aws_rds_cluster.aurora[0].endpoint
+          },
+          {
+            name  = "DB_PORT"
+            value = tostring(aws_rds_cluster.aurora[0].port)
+          },
+          {
+            name  = "DB_NAME"
+            value = var.db_name
+          }
+        ] : []
+      )
       secrets = concat(
         [
           {
@@ -127,24 +149,12 @@ resource "aws_ecs_task_definition" "app" {
         ],
         var.enable_database ? [
           {
-            name      = "DB_HOST"
-            valueFrom = "${aws_rds_cluster.aurora[0].master_user_secret[0].secret_arn}:host::"
-          },
-          {
-            name      = "DB_PORT"
-            valueFrom = "${aws_rds_cluster.aurora[0].master_user_secret[0].secret_arn}:port::"
-          },
-          {
             name      = "DB_USER"
             valueFrom = "${aws_rds_cluster.aurora[0].master_user_secret[0].secret_arn}:username::"
           },
           {
             name      = "DB_PASSWORD"
             valueFrom = "${aws_rds_cluster.aurora[0].master_user_secret[0].secret_arn}:password::"
-          },
-          {
-            name      = "DB_NAME"
-            valueFrom = "${aws_rds_cluster.aurora[0].master_user_secret[0].secret_arn}:dbname::"
           }
         ] : []
       )
