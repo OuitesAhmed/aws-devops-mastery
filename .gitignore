@@ -30,3 +30,4 @@ cdk.out/
 .DS_Store
 Thumbs.db
 
+.venv/
