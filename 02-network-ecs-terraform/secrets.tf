@@ -22,3 +22,4 @@ resource "aws_secretsmanager_secret_version" "app_config" {
     environment = var.environment
   })
 }
+

@@ -13,11 +13,11 @@ provider "aws" {
 }
 
 resource "aws_budgets_budget" "cost_safety_budget" {
-  name              = "monthly-cost-safety-guardrail"
-  budget_type       = "COST"
-  limit_amount      = tostring(var.monthly_limit_usd)
-  limit_unit        = "USD"
-  time_unit         = "MONTHLY"
+  name         = "monthly-cost-safety-guardrail"
+  budget_type  = "COST"
+  limit_amount = tostring(var.monthly_limit_usd)
+  limit_unit   = "USD"
+  time_unit    = "MONTHLY"
 
   # Alerte à 80% du budget réel consommé
   notification {

@@ -6,19 +6,19 @@
 # Cluster Aurora Serverless v2 PostgreSQL
 # Note FinOps : Conditionné par var.enable_database (false par défaut = 0,00$/mois au repos)
 resource "aws_rds_cluster" "aurora" {
-  count                           = var.enable_database ? 1 : 0
-  cluster_identifier              = "${var.environment}-aurora-pg"
-  engine                          = "aurora-postgresql"
-  engine_mode                     = "provisioned" # Requis pour Aurora Serverless v2
-  engine_version                  = var.aurora_engine_version
-  database_name                   = var.db_name
-  master_username                 = var.db_username
-  manage_master_user_password     = true # Géré nativement par AWS Secrets Manager (zéro mot de passe en clair dans le code/state)
-  db_subnet_group_name            = aws_db_subnet_group.main.name
-  vpc_security_group_ids          = [aws_security_group.db.id]
-  skip_final_snapshot             = true
-  deletion_protection             = false
-  apply_immediately               = true
+  count                       = var.enable_database ? 1 : 0
+  cluster_identifier          = "${var.environment}-aurora-pg"
+  engine                      = "aurora-postgresql"
+  engine_mode                 = "provisioned" # Requis pour Aurora Serverless v2
+  engine_version              = var.aurora_engine_version
+  database_name               = var.db_name
+  master_username             = var.db_username
+  manage_master_user_password = true # Géré nativement par AWS Secrets Manager (zéro mot de passe en clair dans le code/state)
+  db_subnet_group_name        = aws_db_subnet_group.main.name
+  vpc_security_group_ids      = [aws_security_group.db.id]
+  skip_final_snapshot         = true
+  deletion_protection         = false
+  apply_immediately           = true
 
   serverlessv2_scaling_configuration {
     min_capacity = var.aurora_min_capacity # 0.5 ACU (~1 Go RAM)
@@ -45,3 +45,4 @@ resource "aws_rds_cluster_instance" "aurora_instance" {
     Name = "${var.environment}-aurora-instance-1"
   }
 }
+
