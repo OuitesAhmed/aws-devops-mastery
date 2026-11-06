@@ -9,6 +9,7 @@ on:
     branches: [ "main" ]
     paths:
       - "03-serverless-cdk/**"
+  workflow_dispatch:
 
 permissions:
   id-token: write # Indispensable pour demander le jeton OIDC à GitHub

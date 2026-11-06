@@ -1,12 +1,19 @@
 name: "Terraform CI Validation (OIDC Zero-Secret)"
 
 on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "01-landing-zone-terraform/**"
+      - "02-network-ecs-terraform/**"
+      - "04-cicd-oidc/**"
   pull_request:
     branches: [ "main" ]
     paths:
       - "01-landing-zone-terraform/**"
       - "02-network-ecs-terraform/**"
       - "04-cicd-oidc/**"
+  workflow_dispatch:
 
 permissions:
   id-token: write
